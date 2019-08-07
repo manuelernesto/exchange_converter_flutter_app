@@ -11,6 +11,7 @@ void main() async {
   print(await getData());
   runApp(MaterialApp(
     home: Home(),
+    theme: ThemeData(hintColor: Colors.amber, primaryColor: Colors.white),
   ));
 }
 
@@ -20,12 +21,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final _realController = TextEditingController();
+  final _usdController = TextEditingController();
+  final _eurController = TextEditingController();
+
+  double _dolar;
+  double _euro;
+
+  void _realChanged(String text) {}
+
+  void _usdChanged(String text) {}
+
+  void _eurChanged(String text) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("\$ Exchange App \$"),
+        title: Text("\$ Exchange Converter \$"),
         backgroundColor: Colors.amber,
         centerTitle: true,
       ),
@@ -36,25 +50,43 @@ class _HomeState extends State<Home> {
               case ConnectionState.none:
               case ConnectionState.waiting:
                 return Center(
-                    child: Text("Loading data...",
-                    style: TextStyle(
-                    color: Colors.amber,
-                    fontSize: 25),
-                    textAlign: TextAlign.center,)
-                );
+                    child: Text(
+                  "Loading data...",
+                  style: TextStyle(color: Colors.amber, fontSize: 25),
+                  textAlign: TextAlign.center,
+                ));
               default:
-                if(snapshot.hasError){
+                if (snapshot.hasError) {
                   return Center(
-                      child: Text("Error on Loading data :(",
-                        style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: 25),
-                        textAlign: TextAlign.center,)
+                      child: Text(
+                    "Error on Loading data :(",
+                    style: TextStyle(color: Colors.amber, fontSize: 25),
+                    textAlign: TextAlign.center,
+                  ));
+                } else {
+                  _dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
+                  _euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Icon(
+                          Icons.monetization_on,
+                          size: 150,
+                          color: Colors.amber,
+                        ),
+                        buildTextField(
+                            "BRL", "R\$", _realController, _realChanged),
+                        Divider(),
+                        buildTextField(
+                            "USD", "US\$", _usdController, _usdChanged),
+                        Divider(),
+                        buildTextField("EUR", "€", _eurController, _eurChanged),
+                      ],
+                    ),
                   );
-                }else{
-                  return Container();
                 }
-
             }
           }),
     );
@@ -64,4 +96,19 @@ class _HomeState extends State<Home> {
 Future<Map> getData() async {
   http.Response response = await http.get(request);
   return json.decode(response.body);
+}
+
+Widget buildTextField(String label, String prefix,
+    TextEditingController controller, Function function) {
+  return TextField(
+    controller: controller,
+    decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.amber),
+        border: OutlineInputBorder(),
+        prefixText: prefix),
+    style: TextStyle(color: Colors.amber, fontSize: 25),
+    onChanged: function,
+    keyboardType: TextInputType.number,
+  );
 }
