@@ -1,6 +1,6 @@
 # $Exchange Flutter app$
 
-![To-do](project.png)
+<img src="https://github.com/manuelernesto/exchange_converter_flutter_app/blob/master/project.png" width="500"/>
 
 ## Getting Started
 For help getting started with Flutter, view our
