@@ -1,4 +1,4 @@
-# $Exchange Converter Flutter app$
+# $Exchange Converter$
 
 <img src="https://github.com/manuelernesto/exchange_converter_flutter_app/blob/master/project.png" width="500"/>
 
